@@ -155,7 +155,7 @@ static int less_handler(request_rec* r) {
 	if(apr_stat(&cssinfo, cssfile, APR_FINFO_MTIME | APR_FINFO_SIZE, r->pool) == APR_SUCCESS) {
 
 		// check, if the css-file is up-to-date
-		if(ALWAYS_RECOMPILE || cssinfo.mtime > lessinfo.mtime) {
+		if(!ALWAYS_RECOMPILE && cssinfo.mtime > lessinfo.mtime) {
 
 			// send the css-file
 			if(!send_css_file(cssfile, cssinfo.size, r)) {
