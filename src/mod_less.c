@@ -235,6 +235,18 @@ static int less_handler(request_rec* r) {
 	}
 	free(cmd);
 
+	// set permissions on the tmpfile
+	status = apr_file_perms_set(tmpfile, APR_UREAD | APR_UWRITE | APR_GREAD | APR_WREAD);
+	if(status != APR_SUCCESS) {
+		ap_log_rerror(APLOG_MARK, APLOG_CRIT, status, r, "apr_file_perms_set failed while setting the permission on the tmpfile %s", tmpfile);
+
+		free(lessfile);
+		free(cssfile);
+		free(tmpfile);
+
+		return HTTP_INTERNAL_SERVER_ERROR;
+	}
+
 	// move the tmpfile over the cssfile
 	status = apr_file_rename(tmpfile, cssfile, r->pool);
 	if(status != APR_SUCCESS) {
