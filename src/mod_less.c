@@ -187,7 +187,7 @@ static int less_handler(request_rec* r) {
 	//  placing the STDERR redirection before the STDOUT redirection gives us a
 	//  not-so-obvious result: sh connects lessc's STDERR with the popen-stream
 	//  and lessc's STDOUT with the named file - we get the errors and not the css-code
-	const char* lessc = "lessc --no-color %s 2>&1 >%s";
+	const char* lessc = "lessc --no-color --compress --relative-urls %s 2>&1 >%s";
 
 	// construct the command to run
 	char* cmd;
