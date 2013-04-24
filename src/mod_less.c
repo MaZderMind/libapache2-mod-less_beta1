@@ -30,6 +30,11 @@
 
 #define MAX_ERROR_SIZE 2*1024
 
+// set to 1 to recompile the less-file on every hit. This is useful in testing-Environments
+// that use @import to load external .less-files. Changing these external files does not
+// trigger a recompile, when this setting ist at 0
+#define ALWAYS_RECOMPILE 0
+
 int send_css_file(const char *filename, const apr_size_t size, request_rec *r) {
 	apr_status_t status;
 	apr_file_t *fd;
@@ -150,7 +155,7 @@ static int less_handler(request_rec* r) {
 	if(apr_stat(&cssinfo, cssfile, APR_FINFO_MTIME | APR_FINFO_SIZE, r->pool) == APR_SUCCESS) {
 
 		// check, if the css-file is up-to-date
-		if(cssinfo.mtime > lessinfo.mtime) {
+		if(ALWAYS_RECOMPILE || cssinfo.mtime > lessinfo.mtime) {
 
 			// send the css-file
 			if(!send_css_file(cssfile, cssinfo.size, r)) {
